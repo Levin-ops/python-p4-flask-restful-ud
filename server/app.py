@@ -98,19 +98,21 @@ class NewsletterByID(Resource):
         return response
 
     def delete(self, id):
-        record = Newsletter.query.filter_by(id=id).first()
+        record = Newsletter.query.get(id)
 
-        db.session.delete(record)
-        db.session.commit()
+        if record:
+            db.session.delete(record)
+            db.session.commit()
 
-        response_dict ={
-            "message":"record successfully deleted"
-        }
-
-        response = make_response(
-            jsonify(response_dict),
-            200
-        )
+            response = make_response('', 204)  # No Content
+        else:
+            response_dict = {
+                "message": f"Record with id {id} not found",
+            }
+            response = make_response(
+                jsonify(response_dict),
+                404,
+            )
 
         return response
 
